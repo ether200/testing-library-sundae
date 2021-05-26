@@ -16,7 +16,8 @@ describe("<OrderEntry />", () => {
       ),
     ]);
 
-    render(<OrderEntry />);
+    // jest.fn() is a way to MOCK FN -- IT DOESN'T DO ANYTHING
+    render(<OrderEntry setOrderPhase={jest.fn()} />);
 
     // We need to use the waitFor method because it'd only succeed for only 1 call, instead of 2 since it's async
     await waitFor(async () => {

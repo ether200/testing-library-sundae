@@ -14,7 +14,7 @@ const Example = () => (
 );
 */
 
-export default function SummaryForm() {
+export default function SummaryForm({ setOrderPhase }) {
   const [tcChecked, setTcChecked] = useState(false);
 
   const popover = (
@@ -32,17 +32,27 @@ export default function SummaryForm() {
     </span>
   );
 
+  function submitHandler(e) {
+    e.preventDefault();
+    setTcChecked(e.target.checked);
+  }
+
   return (
     <Form>
       <Form.Group controlId="terms-and-conditions">
         <Form.Check
           type="checkbox"
           checked={tcChecked}
-          onChange={(e) => setTcChecked(e.target.checked)}
+          onChange={submitHandler}
           label={checkboxLabel}
         />
       </Form.Group>
-      <Button variant="primary" type="submit" disabled={!tcChecked}>
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={!tcChecked}
+        onClick={() => setOrderPhase("completed")}
+      >
         Confirm order
       </Button>
     </Form>
