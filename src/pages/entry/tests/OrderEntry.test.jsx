@@ -2,6 +2,7 @@ import { screen, render, waitFor } from "../../../test-utils/testing-library";
 import OrderEntry from "../OrderEntry";
 import { rest } from "msw";
 import { server } from "../../../mocks/server";
+import userEvent from "@testing-library/user-event";
 
 describe("<OrderEntry />", () => {
   // You can write test.only to make ONLY the flagged test run
@@ -25,4 +26,35 @@ describe("<OrderEntry />", () => {
       expect(alerts).toHaveLength(2);
     });
   });
+
+  // test.only("No scoop subtotal update for invalid scoop count", async () => {
+  //   const component = render(<OrderEntry setOrderPhase={jest.fn()} />);
+
+  //   const chocolateScoopInput = await screen.findByRole("spinbutton", {
+  //     name: "Chocolate",
+  //   });
+  //   const grandTotal = screen.getByRole("heading", {
+  //     name: /grand total: \$/i,
+  //   });
+
+  //   userEvent.clear(chocolateScoopInput);
+  //   userEvent.type(chocolateScoopInput, "-2");
+
+  //   expect(grandTotal).toHaveTextContent("$0.00");
+
+  //   userEvent.clear(chocolateScoopInput);
+  //   userEvent.type(chocolateScoopInput, "1.5");
+
+  //   expect(grandTotal).toHaveTextContent("$0.00");
+
+  //   userEvent.clear(chocolateScoopInput);
+  //   userEvent.type(chocolateScoopInput, "20");
+
+  //   expect(grandTotal).toHaveTextContent("$0.00");
+
+  //   userEvent.clear(chocolateScoopInput);
+  //   userEvent.type(chocolateScoopInput, "2");
+
+  //   expect(grandTotal).toHaveTextContent("$4.00");
+  // });
 });

@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "../test-utils/testing-library";
 import userEvent from "@testing-library/user-event";
 
 import App from "../App";
+import OrderEntry from "../pages/entry/OrderEntry";
 
 test("order phases for happy path", async () => {
   // render app
@@ -44,11 +45,19 @@ test("order phases for happy path", async () => {
   userEvent.click(termsAndConditions);
   userEvent.click(confirmOrderButton);
 
+  // confirm loading is showing on confirmation page
+  const loadingMessage = screen.queryByText("Loading");
+  expect(loadingMessage).toBeInTheDocument();
+
   // confirm order number on confirmation page
   const orderNumber = await screen.findByText("Your order number is", {
     exact: false,
   });
   expect(orderNumber).toBeInTheDocument();
+
+  //confirm loading is not showing
+  // REMEMBER TO USE queryBy when expecting the element not to be in the document
+  expect(screen.queryByText("Loading")).toBeNull();
 
   // click new order on confirmation page
   const createNewOrderButton = await screen.findByRole("button", {
@@ -70,4 +79,43 @@ test("order phases for happy path", async () => {
   // check that scoops and toppings subtotal has been reset
   // expect(chocolateScoopInput).toHaveTextContent("0");
   // expect(cherriesToppingsCheckbox).not.toBeChecked();
+});
+
+test("Topping Section is not on summary page", async () => {
+  render(<App />);
+
+  const vanillaScoopsInput = await screen.findByRole("spinbutton", {
+    name: "Vanilla",
+  });
+  const confirmButton = screen.getByRole("button", { name: "Order Sundae!" });
+
+  // Button should be disabled if there's no scoops added
+  expect(confirmButton).toBeDisabled();
+
+  // Add vanilla scoops
+  userEvent.type(vanillaScoopsInput, "2");
+  // Confirm order
+  userEvent.click(confirmButton);
+
+  // Now it's on order summary
+  expect(screen.queryByText("Toppings")).toBeNull();
+});
+
+test.skip("Button is disabled when there are scoops", async () => {
+  const app = render(<OrderEntry setOrderPhase={jest.fn()} />);
+
+  const vanillaScoopsInput = await screen.findByRole("spinbutton", {
+    name: "Vanilla",
+  });
+  const confirmButton = screen.getByRole("button", { name: "Order Sundae!" });
+
+  // Button should be disabled if there's no scoops added
+  expect(confirmButton).toBeDisabled();
+
+  // Add vanilla scoops
+  userEvent.type(vanillaScoopsInput, "2");
+  expect(confirmButton).toBeEnabled();
+
+  userEvent.clear(vanillaScoopsInput);
+  expect(confirmButton).toBeDisabled();
 });
